@@ -1,7 +1,7 @@
 import os
 from django.shortcuts import render, redirect
 
-from app.models import Car, CarBrand
+from app.models import Car, CarBrand, ExtraCarImage
 from .forms import CarForm
 import pandas as pd
 from django.core.files import File
@@ -92,6 +92,15 @@ def bulk_upload_items(request):
                     file.close()
 
                     car.save()
+
+                    for extra_image in response['extra_images']:
+                        extra_car_image = ExtraCarImage()
+                        extra_car_image.car = car
+                        
+                        file = open(extra_image, 'rb')
+                        extra_car_image.car_image.save(os.path.basename(extra_image), File(file))
+                        extra_car_image
+
                     print(car)
                 print("============")
             # item = Car(make=row['make'], brand=row['brand'])
